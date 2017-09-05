@@ -42,3 +42,28 @@ def text_processing(folder_path, test_size=0.2):
                 break
             with open(os.path.join(new_folder_path,file), 'r') as fp:
                 raw = fp.read()
+            jieba.enable_parallel(2)
+            word_cut = jieba.cut(raw,cut_all=False)
+            word_list = list(word_cut)
+            jieba.disable_parallel()
+            data_list.append(word_list)
+            class_list.append(folder)
+            j += 1
+    data_class_list = zip(data_list, class_list)
+    random.shuffle(data_class_list)
+    index = int(len(data_class_list)*test_size) + 1
+    train_list = data_class_list[index:]
+    test_list = data_class_list[:index]
+    train_data_list, train_class_list = zip(*train_list)
+    test_data_list, test_class_list = zip(*test_list)
+
+    all_words_dict = {}
+    for word_list in train_data_list:
+        for word in word_list:
+            if all_words_dict.has_key(word):
+                all_words_dict[word] += 1
+            else:
+                all_words_dict[word] = 1
+    all_words_tuple_list = sorted(all_words_dict.items(),key=lambda f:f[1], reverse=True)
+    all_words_dict = list(zip(*all_words_tuple_list)[0])
+    return all_words_list, train_data_list, test_data_list, train_data_list, test_data_list
