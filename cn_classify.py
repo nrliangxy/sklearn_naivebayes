@@ -20,7 +20,7 @@ def make_word_set(word_file):
             if len(word) > 0 and word not in word_set:
                 word_set.add(word)
     return word_set
-#print(make_word_set('/home/lxy/Downloads/nlp/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/Database/SogouC/Sample/C000010/10.txt'))
+print(make_word_set('/home/lxy/Downloads/nlp/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/Database/SogouC/Sample/C000010/10.txt'))
 #text processing
 def text_processing(folder_path, test_size=0.2):
     """
@@ -28,21 +28,16 @@ def text_processing(folder_path, test_size=0.2):
     :param test_size:
     :return: text processing
     """
-    folder_list = os.listdir(folder_path)
-    data_list = []
-    class_list = []
-    # traverse the folder
-    for folder in folder_list:
-        new_folder_path = os.path.join(folder_path,folder)
-        files = os.listdir(new_folder_path)
-        # read file
-        j = 1
-        for file in files:
-            if j > 100: #limit its number
-                break
-            with open(os.path.join(new_folder_path,file), 'r') as fp:
+    for path,d,filelist in os.walk(folder_path):
+        for filename in filelist:
+            direct = os.path.join(path,filename)
+            with open(direct, 'r') as fp:
                 raw = fp.read()
-            jieba.enable_parallel(2)
+                print(raw)
+folder_path = '/home/lxy/Downloads/nlp/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/Database/SogouC/Sample'
+text_processing(folder_path)
+
+    jieba.enable_parallel(2)
             word_cut = jieba.cut(raw,cut_all=False)
             word_list = list(word_cut)
             jieba.disable_parallel()
@@ -67,3 +62,4 @@ def text_processing(folder_path, test_size=0.2):
     all_words_tuple_list = sorted(all_words_dict.items(),key=lambda f:f[1], reverse=True)
     all_words_dict = list(zip(*all_words_tuple_list)[0])
     return all_words_list, train_data_list, test_data_list, train_data_list, test_data_list
+
