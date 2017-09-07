@@ -5,12 +5,21 @@ def text_processing(folder_path, test_size=0.2):
     :param test_size:
     :return: text processing
     """
-    for path,d,filelist in os.walk(folder_path):
+    data_list = []
+    class_list = []
+    for path, d, filelist in os.walk(folder_path):
         for filename in filelist:
-            direct = os.path.join(path,filename)
+            direct = os.path.join(path, filename)
+            # print(direct)
             with open(direct, 'r') as fp:
                 raw = fp.read()
-                print(raw)
+                # print(raw)
+            jieba.enable_parallel(2)
+            word_cut = jieba.cut(raw, cut_all=False)
+            word_list = list(word_cut)
+            print(word_list)
+            jieba.disable_parallel()
+            data_list.append(word_list)
     # folder_list = os.listdir(folder_path)
     # data_list = []
     # class_list = []
