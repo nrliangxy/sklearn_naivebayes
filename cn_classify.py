@@ -4,6 +4,7 @@ import time
 import random
 import jieba
 import sklearn
+from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 import numpy as np
 import pylab
@@ -45,8 +46,47 @@ def text_processing(folder_path, test_size=0.2):
             data_list.append(word_list)
             class_list.append(folder)
 
-    data_class_list = list(zip(data_list, class_list))
-    print(data_class_list)
+    # data_class_list = zip(data_list, class_list)
+    # random.shuffle(data_class_list)
+    train_data_list, test_data_list, train_class_list, test_class_list = train_test_split(data_list, class_list, test_size=test_size)
+    all_words_dict = {}
+    for word_list in train_data_list:
+        for word in word_list:
+            if word in all_words_dict:
+                all_words_dict[word] += 1
+            else:
+                all_words_dict[word] = 1
+    all_words_tuple_list = sorted(all_words_dict.items(),key=lambda f:f[1], reverse=True)
+    all_words_list = list(zip(*all_words_tuple_list))[0]
+    return all_words_list
+    #return all_words_list,train_data_list,test_data_list,train_class_list,test_class_list
+def words_dict(all_words_list,deleteN,stopwords_set=set()):
+    feature_words = []
+    n = 1
+    for t in range(deleteN,len(all_words_list), 1):
+        if n > 1000:
+            break
+        if not all_words_list[t].isdigit() and all_words_list[t] not in stopwords_set and 1 < len(all_words_list[t]) < 5:
+            feature_words.append(all_words_list[t])
+            n += 1
+    return feature_words
+def text_features(train_data_list,test_data_list,feature_words,flag='nltk'):
+    def text_features(text,feature_words):
+        text_words = set(text)
+        if flag == 'nltk':
+            features = {word:1 if word in text_words else 0 for word in feature_words}
+        elif flag == 'sklearn':
+            features = [1 if word in text_words else o for word in feature_words]
+        else:
+            features = []
+        return features
+    train_feature_list = [text_features(text,feature_words) for text in train_data_list]
+    test_feature_list = [text_features(text,feature_words) for text in test_data_list]
+    return train_feature_list,test_feature_list
+def text_classifier(train_feature_list, test_feature_list,train_class_list,test_class_list,flag='nltk'):
+
+
+    #print(data_class_list)
     # random.shuffle(data_class_list)
     # index = int(len(data_class_list)*test_size) + 1
     # train_list = data_class_list[index:]
@@ -66,6 +106,6 @@ def text_processing(folder_path, test_size=0.2):
     # return all_words_list, train_data_list, test_data_list, train_data_list, test_data_list
 
 
-folder_path = '/home/lxy/Documents/corpus/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/Database/SogouC/Sample'
-text_processing(folder_path)
+folder_path = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/Database/SogouC/Sample'
+print(words_dict(text_processing(folder_path),1))
 
