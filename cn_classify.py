@@ -29,7 +29,7 @@ def text_processing(folder_path, test_size=0.2):
     :param test_size:
     :return: text processing
     """
-    folder_list =  os.listdir(folder_path)
+    folder_list = os.listdir(folder_path)
     data_list = []
     class_list = []
     for folder in folder_list:
@@ -45,6 +45,7 @@ def text_processing(folder_path, test_size=0.2):
             jieba.disable_parallel()
             data_list.append(word_list)
             class_list.append(folder)
+
 
     # data_class_list = zip(data_list, class_list)
     # random.shuffle(data_class_list)
@@ -96,7 +97,7 @@ def text_classifier(train_feature_list, test_feature_list,train_class_list,test_
         test_accuracy = []
     return test_accuracy
 print('start')
-folder_path = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/Database/SogouC/Sample'
+folder_path = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/Database/SogouC/Sample_3'
 all_words_list, train_data_list, test_data_list, train_class_list, test_class_list = text_processing(folder_path,test_size=0.2)
 stopwords_file = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/stopwords_cn.txt'
 stopwords_set = make_word_set(stopwords_file)
@@ -109,6 +110,7 @@ for deleteN in deleteNs:
     test_accuracy = text_classifier(train_feature_list,test_feature_list,train_class_list,test_class_list,flag)
     test_accuracy_list.append(test_accuracy)
 print(test_accuracy_list)
+print(len(test_accuracy_list))
 plt.plot(deleteNs,test_accuracy_list)
 plt.title('Relationship of deleteNs and test_accuracy')
 plt.xlabel('deleteNs')
