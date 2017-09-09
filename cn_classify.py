@@ -58,8 +58,8 @@ def text_processing(folder_path, test_size=0.2):
                 all_words_dict[word] = 1
     all_words_tuple_list = sorted(all_words_dict.items(),key=lambda f:f[1], reverse=True)
     all_words_list = list(zip(*all_words_tuple_list))[0]
-    return all_words_list
-    #return all_words_list,train_data_list,test_data_list,train_class_list,test_class_list
+    #return all_words_list
+    return all_words_list,train_data_list,test_data_list,train_class_list,test_class_list
 def words_dict(all_words_list,deleteN,stopwords_set=set()):
     feature_words = []
     n = 1
@@ -70,21 +70,51 @@ def words_dict(all_words_list,deleteN,stopwords_set=set()):
             feature_words.append(all_words_list[t])
             n += 1
     return feature_words
-def text_features(train_data_list,test_data_list,feature_words,flag='nltk'):
+def text_features(train_data_list,test_data_list,feature_words,flag='sklearn'):
     def text_features(text,feature_words):
         text_words = set(text)
         if flag == 'nltk':
             features = {word:1 if word in text_words else 0 for word in feature_words}
         elif flag == 'sklearn':
-            features = [1 if word in text_words else o for word in feature_words]
+            features = [1 if word in text_words else 0 for word in feature_words]
         else:
             features = []
         return features
     train_feature_list = [text_features(text,feature_words) for text in train_data_list]
     test_feature_list = [text_features(text,feature_words) for text in test_data_list]
     return train_feature_list,test_feature_list
-def text_classifier(train_feature_list, test_feature_list,train_class_list,test_class_list,flag='nltk'):
-
+def text_classifier(train_feature_list, test_feature_list,train_class_list,test_class_list,flag='sklearn'):
+    if flag == 'nltk':
+        train_flist = zip(train_feature_list,train_class_list)
+        test_flist = zip(test_feature_list,test_class_list)
+        classifier = nltk.classify.NaiveBayesClassifier.train(train_flist)
+        test_accuracy = nltk.classify.accuracy(classifier,test_flist)
+    elif flag == 'sklearn':
+        classifier = MultinomialNB().fit(train_feature_list, train_class_list)
+        test_accuracy = classifier.score(test_feature_list,test_class_list)
+    else:
+        test_accuracy = []
+    return test_accuracy
+print('start')
+folder_path = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/Database/SogouC/Sample'
+all_words_list, train_data_list, test_data_list, train_class_list, test_class_list = text_processing(folder_path,test_size=0.2)
+stopwords_file = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/stopwords_cn.txt'
+stopwords_set = make_word_set(stopwords_file)
+flag = 'sklearn'
+deleteNs = range(0,1000,20)
+test_accuracy_list = []
+for deleteN in deleteNs:
+    feature_words = words_dict(all_words_list,deleteN,stopwords_set)
+    train_feature_list, test_feature_list = text_features(train_data_list,test_data_list,feature_words,flag)
+    test_accuracy = text_classifier(train_feature_list,test_feature_list,train_class_list,test_class_list,flag)
+    test_accuracy_list.append(test_accuracy)
+print(test_accuracy_list)
+plt.plot(deleteNs,test_accuracy_list)
+plt.title('Relationship of deleteNs and test_accuracy')
+plt.xlabel('deleteNs')
+plt.ylabel('test_accuracy')
+plt.show()
+print('finished')
 
     #print(data_class_list)
     # random.shuffle(data_class_list)
@@ -106,6 +136,5 @@ def text_classifier(train_feature_list, test_feature_list,train_class_list,test_
     # return all_words_list, train_data_list, test_data_list, train_data_list, test_data_list
 
 
-folder_path = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/Database/SogouC/Sample'
-print(words_dict(text_processing(folder_path),1))
+#print(words_dict(text_processing(folder_path),1))
 
