@@ -1,6 +1,7 @@
 import os
 import codecs
 import jieba
+import pickle
 import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
@@ -33,11 +34,13 @@ def text_processing(folder_path, test_size=0.2):
         new_folder_path = os.path.join(folder_path,folder)
         files = os.listdir(new_folder_path)
         for file in files:
-            try:
-                with codecs.open(os.path.join(new_folder_path,file), 'r', 'GB18030') as fp:
-                    raw = fp.read()
-            except UnicodeDecodeError:
-                pass
+            with open(os.path.join(new_folder_path, file), 'r') as fp:
+                raw = fp.read()
+            # try:
+            #     with codecs.open(os.path.join(new_folder_path,file), 'r', 'GB18030') as fp:
+            #         raw = fp.read()
+            # except UnicodeDecodeError:
+            #     pass
             jieba.enable_parallel(2)
             word_cut = jieba.cut(raw,cut_all=False)
             word_list = list(word_cut)
@@ -92,12 +95,14 @@ def text_classifier(train_feature_list, test_feature_list,train_class_list,test_
         test_accuracy = nltk.classify.accuracy(classifier,test_flist)
     elif flag == 'sklearn':
         classifier = MultinomialNB().fit(train_feature_list, train_class_list)
+        with open('/home/lxy/Documents/cn_classifify.pickle', 'wb') as fw:
+            pickle.dump(classifier, fw)
         test_accuracy = classifier.score(test_feature_list,test_class_list)
     else:
         test_accuracy = []
     return test_accuracy
 print('start')
-folder_path = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/Database/SogouC/Sample_3'
+folder_path = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/Database/SogouC/Sample'
 all_words_list, train_data_list, test_data_list, train_class_list, test_class_list = text_processing(folder_path,test_size=0.2)
 stopwords_file = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/stopwords_cn.txt'
 stopwords_set = make_word_set(stopwords_file)
@@ -107,9 +112,11 @@ test_accuracy_list = []
 for deleteN in deleteNs:
     feature_words = words_dict(all_words_list,deleteN,stopwords_set)
     train_feature_list, test_feature_list = text_features(train_data_list,test_data_list,feature_words,flag)
+
     test_accuracy = text_classifier(train_feature_list,test_feature_list,train_class_list,test_class_list,flag)
     test_accuracy_list.append(test_accuracy)
 print(test_accuracy_list)
+print(len(test_accuracy_list))
 plt.plot(deleteNs,test_accuracy_list)
 plt.title('Relationship of deleteNs and test_accuracy')
 plt.xlabel('deleteNs')
@@ -117,25 +124,4 @@ plt.ylabel('test_accuracy')
 plt.show()
 print('finished')
 
-    #print(data_class_list)
-    # random.shuffle(data_class_list)
-    # index = int(len(data_class_list)*test_size) + 1
-    # train_list = data_class_list[index:]
-    # test_list = data_class_list[:index]
-    # train_data_list, train_class_list = zip(*train_list)
-    # test_data_list, test_class_list = zip(*test_list)
-    #
-    # all_words_dict = {}
-    # for word_list in train_data_list:
-    #     for word in word_list:
-    #         if all_words_dict.has_key(word):
-    #             all_words_dict[word] += 1
-    #         else:
-    #             all_words_dict[word] = 1
-    # all_words_tuple_list = sorted(all_words_dict.items(),key=lambda f:f[1], reverse=True)
-    # all_words_dict = list(zip(*all_words_tuple_list)[0])
-    # return all_words_list, train_data_list, test_data_list, train_data_list, test_data_list
-
-
-#print(words_dict(text_processing(folder_path),1))
 
