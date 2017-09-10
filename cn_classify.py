@@ -1,7 +1,5 @@
-#coding: utf-8
 import os
-import time
-import random
+import codecs
 import jieba
 import sklearn
 from sklearn.model_selection import train_test_split
@@ -21,8 +19,7 @@ def make_word_set(word_file):
             if len(word) > 0 and word not in word_set:
                 word_set.add(word)
     return word_set
-#print(make_word_set('/home/lxy/Downloads/nlp/Lecture_2/Lecture_2/Naive-Bayes-Text-Classifier/Database/SogouC/Sample/C000010/10.txt'))
-#text processing
+
 def text_processing(folder_path, test_size=0.2):
     """
     :param folder_path:
@@ -36,8 +33,11 @@ def text_processing(folder_path, test_size=0.2):
         new_folder_path = os.path.join(folder_path,folder)
         files = os.listdir(new_folder_path)
         for file in files:
-            with open(os.path.join(new_folder_path,file), 'r') as fp:
-                raw = fp.read()
+            try:
+                with codecs.open(os.path.join(new_folder_path,file), 'r', 'GB18030') as fp:
+                    raw = fp.read()
+            except UnicodeDecodeError:
+                pass
             jieba.enable_parallel(2)
             word_cut = jieba.cut(raw,cut_all=False)
             word_list = list(word_cut)
