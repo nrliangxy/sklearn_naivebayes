@@ -110,7 +110,6 @@ for deleteN in deleteNs:
     test_accuracy = text_classifier(train_feature_list,test_feature_list,train_class_list,test_class_list,flag)
     test_accuracy_list.append(test_accuracy)
 print(test_accuracy_list)
-print(len(test_accuracy_list))
 plt.plot(deleteNs,test_accuracy_list)
 plt.title('Relationship of deleteNs and test_accuracy')
 plt.xlabel('deleteNs')
