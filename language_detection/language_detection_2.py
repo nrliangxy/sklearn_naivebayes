@@ -17,6 +17,8 @@ class LanguageDetector():
         self.classifier.fit(self.features(x), y)
     def predict(self, x):
         return self.classifier.predict(self.features([x]))
+    def score(self, x, y):
+        return self.classifier.score(self.features(x), y)
 path = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Language-Detector/data.csv'
 in_f = open(path)
 lines = in_f.readlines()
@@ -26,5 +28,5 @@ x, y = zip(*dataset)
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1)
 language_detector = LanguageDetector()
 language_detector.fit(x_train, y_train)
-print(language_detector.predict('this is English sentence'))
+print(language_detector.predict('Bonjour, je vais réussir'))
 print(language_detector.score(x_test, y_test))
