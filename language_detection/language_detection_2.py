@@ -17,7 +17,9 @@ class LanguageDetector():
         self.classifier.fit(self.features(x), y)
     def predict(self, x):
         return self.classifier.predict(self.features([x]))
-path = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Language-Detector/data.csv'
+    def score(self, x, y):
+        return self.classifier.score(self.features(x), y)
+path = '/home/lxy/Downloads/Lecture_2/Lecture_2/Language-Detector/data.csv'
 in_f = open(path)
 lines = in_f.readlines()
 in_f.close()
