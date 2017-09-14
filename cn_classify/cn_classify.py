@@ -128,7 +128,6 @@ test_accuracy_list = []
 for deleteN in deleteNs:
     feature_words = words_dict(all_words_list,deleteN,stopwords_set)
     train_feature_list, test_feature_list = text_features(train_data_list,test_data_list,feature_words,flag)
-
     test_accuracy = text_classifier(train_feature_list,test_feature_list,train_class_list,test_class_list,flag)
     test_accuracy_list.append(test_accuracy)
 print(test_accuracy_list)

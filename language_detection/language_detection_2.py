@@ -19,7 +19,9 @@ class LanguageDetector():
         return self.classifier.predict(self.features([x]))
     def score(self, x, y):
         return self.classifier.score(self.features(x), y)
+
 path = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Language-Detector/data.csv'
+>>>>>>> d2b9c7706f1e1c68d3f0bbf7093636d6b9218871
 in_f = open(path)
 lines = in_f.readlines()
 in_f.close()
