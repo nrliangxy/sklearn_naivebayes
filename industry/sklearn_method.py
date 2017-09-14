@@ -12,3 +12,4 @@ def getTrainData(path,num):
         filtered_0 = [word.lower() for word in tags if word not in stopwords.words("english")]
         filtered_1 = [word for word in filtered_0 if not any(char.isdigit() for char in word)]
         filtered = [nltk.stem.SnowballStemmer("english").stem(word) for word in filtered_1]
+        features = []
