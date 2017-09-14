@@ -113,8 +113,6 @@ def text_classifier(train_feature_list, test_feature_list,train_class_list,test_
         test_accuracy = nltk.classify.accuracy(classifier,test_flist)
     elif flag == 'sklearn':
         classifier = MultinomialNB().fit(train_feature_list, train_class_list)
-        with open('/home/lxy/Documents/cn_classifify.pickle', 'wb') as fw:
-            pickle.dump(classifier, fw)
         test_accuracy = classifier.score(test_feature_list,test_class_list)
     else:
         test_accuracy = []
