@@ -8,6 +8,7 @@ def getTrainData(path,num):
     class_list = []
     for i in df['des']:
         tken = [word for word in nltk.word_tokenize(i)]
+        data_list.append(tken)
         tags = [i[0] for i in nltk.pos_tag(tken) if (("NN" in i[1]) or ("J" in i[1]) or ("RB" in i[1]))]
         filtered_0 = [word.lower() for word in tags if word not in stopwords.words("english")]
         filtered_1 = [word for word in filtered_0 if not any(char.isdigit() for char in word)]
