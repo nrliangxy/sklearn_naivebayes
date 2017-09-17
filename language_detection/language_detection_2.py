@@ -21,6 +21,7 @@ class LanguageDetector():
         return self.classifier.score(self.features(x), y)
 
 path = '/home/lxy/Downloads/nlp_corpus/Lecture_2/Lecture_2/Language-Detector/data.csv'
+
 in_f = open(path)
 lines = in_f.readlines()
 in_f.close()
